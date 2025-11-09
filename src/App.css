@@ -1,42 +1,312 @@
-#root {
-  max-width: 1280px;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  color: white;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.instructions {
+  font-size: 1.1rem;
+  opacity: 0.95;
+}
+
+/* Result Message */
+.result-message {
+  background: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.result-message.success {
+  background: #4ade80;
+  color: white;
+}
+
+.result-message.info {
+  background: #fbbf24;
+  color: #78350f;
+}
+
+/* Venn Diagram Container */
+.venn-diagram-container {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.venn-diagram {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  height: 500px;
+  margin: 0 auto;
+}
+
+/* SVG Circles */
+.venn-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.circle {
+  fill: rgba(100, 150, 255, 0.15);
+  stroke: #667eea;
+  stroke-width: 2;
+}
+
+.circle-1 { fill: rgba(255, 100, 100, 0.15); stroke: #ef4444; }
+.circle-2 { fill: rgba(100, 200, 100, 0.15); stroke: #22c55e; }
+.circle-3 { fill: rgba(100, 100, 255, 0.15); stroke: #3b82f6; }
+
+/* Zones */
+.zone {
+  position: absolute;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.zone:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(1.02);
+}
+
+.zone.selected {
+  background: rgba(66, 153, 225, 0.3);
+  border: 3px solid #3182ce;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
+
+/* Zone Positions */
+.zone-top-left { top: 40px; left: 60px; }
+.zone-top-right { top: 40px; right: 60px; }
+.zone-bottom { bottom: 40px; left: 50%; transform: translateX(-50%); }
+.zone-top-center { top: 80px; left: 50%; transform: translateX(-50%); }
+.zone-left-center { top: 50%; left: 100px; transform: translateY(-50%); }
+.zone-right-center { top: 50%; right: 100px; transform: translateY(-50%); }
+.zone-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+.zone-label {
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+  color: #1f2937;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.zone-words {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Selected Zone Banner */
+.selected-zone-banner {
+  margin-top: 20px;
+  padding: 12px 20px;
+  background: #3b82f6;
+  color: white;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+/* Word Bank */
+.word-bank {
+  background: white;
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.word-bank h3 {
+  margin-bottom: 15px;
+  color: #1f2937;
+  font-size: 1.5rem;
+}
+
+.hint {
+  color: #6b7280;
+  font-size: 0.95rem;
+  margin-bottom: 15px;
+  font-style: italic;
+}
+
+.word-bank-empty {
+  padding: 30px;
+  text-align: center;
+  font-size: 1.3rem;
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.word-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Word Chips */
+.word-chip {
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.word-chip.available {
+  background: #e0e7ff;
+  color: #4338ca;
+  border: 2px solid #818cf8;
+}
+
+.word-chip.available:hover {
+  background: #c7d2fe;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.word-chip.placed {
+  background: #d1fae5;
+  color: #065f46;
+  border: 2px solid #34d399;
+}
+
+.word-chip.placed:hover {
+  background: #fca5a5;
+  border-color: #ef4444;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 14px 28px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #10b981;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #059669;
+}
+
+.btn-secondary {
+  background: #6b7280;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #4b5563;
+}
+
+.btn-hint {
+  background: #f59e0b;
+  color: white;
+}
+
+.btn-hint:hover {
+  background: #d97706;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 2rem;
   }
-  to {
-    transform: rotate(360deg);
+
+  .venn-diagram {
+    height: 400px;
   }
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+  .zone {
+    min-width: 90px;
+    min-height: 80px;
+    font-size: 0.85rem;
   }
-}
 
-.card {
-  padding: 2em;
-}
+  .word-chip {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
 
-.read-the-docs {
-  color: #888;
+  .btn {
+    padding: 12px 20px;
+    font-size: 1rem;
+  }
 }
