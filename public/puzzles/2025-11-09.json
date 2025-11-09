@@ -1,0 +1,28 @@
+{
+  "circles": ["Liquid", "Blue", "Drinkable"],
+  "words": [
+    "Lava",
+    "Mercury",
+    "Sapphire",
+    "Blueberry",
+    "Milk",
+    "Coffee",
+    "Blue Paint",
+    "Windex",
+    "Orange Juice",
+    "Tea",
+    "Blue Slushie",
+    "Blue Gatorade",
+    "Water",
+    "Blue Raspberry Soda"
+  ],
+  "solution": {
+    "only-1": ["Lava", "Mercury"],
+    "only-2": ["Sapphire", "Blueberry"],
+    "only-3": ["Milk", "Coffee"],
+    "1-2": ["Blue Paint", "Windex"],
+    "1-3": ["Orange Juice", "Tea"],
+    "2-3": ["Blue Slushie", "Blue Gatorade"],
+    "center": ["Water", "Blue Raspberry Soda"]
+  }
+}

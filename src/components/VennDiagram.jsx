@@ -22,10 +22,10 @@ const VennDiagram = ({
     <div className="venn-diagram-container">
       <div className="venn-diagram">
         {/* SVG Circles */}
-        <svg className="venn-svg" viewBox="0 0 400 350">
-          <circle cx="150" cy="120" r="100" className="circle circle-1" />
-          <circle cx="250" cy="120" r="100" className="circle circle-2" />
-          <circle cx="200" cy="200" r="100" className="circle circle-3" />
+        <svg className="venn-svg" viewBox="0 0 500 450">
+          <circle cx="190" cy="160" r="145" className="circle circle-1" />
+          <circle cx="310" cy="160" r="145" className="circle circle-2" />
+          <circle cx="250" cy="275" r="145" className="circle circle-3" />
         </svg>
 
         {/* Interactive Zones */}
@@ -39,7 +39,6 @@ const VennDiagram = ({
               className={`zone zone-${zone.position} ${isSelected ? 'selected' : ''}`}
               onClick={() => onZoneClick(zone.id)}
             >
-              <div className="zone-label">{zone.label}</div>
               <div className="zone-words">
                 {words.map(word => (
                   <div

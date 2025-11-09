@@ -1,0 +1,28 @@
+{
+  "circles": ["Hot", "Metal", "Sharp"],
+  "words": [
+    "Fire",
+    "Sun",
+    "Aluminum Foil",
+    "Copper Wire",
+    "Needle",
+    "Thorn",
+    "Hot Pan",
+    "Heated Steel",
+    "Molten Lava",
+    "Boiling Oil",
+    "Broken Glass",
+    "Metal Shard",
+    "Hot Knife",
+    "Welding Torch"
+  ],
+  "solution": {
+    "only-1": ["Fire", "Sun"],
+    "only-2": ["Aluminum Foil", "Copper Wire"],
+    "only-3": ["Needle", "Thorn"],
+    "1-2": ["Hot Pan", "Heated Steel"],
+    "1-3": ["Molten Lava", "Boiling Oil"],
+    "2-3": ["Broken Glass", "Metal Shard"],
+    "center": ["Hot Knife", "Welding Torch"]
+  }
+}

@@ -1,23 +1,44 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import VennDiagram from './components/VennDiagram'
 import WordBank from './components/WordBank'
 import Controls from './components/Controls'
-import { samplePuzzle } from './data/puzzles'
+import { fetchTodaysPuzzle } from './utils/dateUtils'
 
 function App() {
-  const [puzzle] = useState(samplePuzzle)
+  const [puzzle, setPuzzle] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [placements, setPlacements] = useState({}) // { zone: [words] }
   const [selectedZone, setSelectedZone] = useState(null)
   const [showThemes, setShowThemes] = useState(false)
   const [showSolution, setShowSolution] = useState(false)
   const [resultMessage, setResultMessage] = useState('')
 
+  // Load today's puzzle on mount
+  useEffect(() => {
+    const loadPuzzle = async () => {
+      try {
+        setLoading(true)
+        const todaysPuzzle = await fetchTodaysPuzzle()
+        setPuzzle(todaysPuzzle)
+        setError(null)
+      } catch (err) {
+        setError('Could not load today\'s puzzle. Please try again later.')
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadPuzzle()
+  }, [])
+
   // Get all placed words
-  const placedWords = Object.values(placements).flat()
+  const placedWords = puzzle ? Object.values(placements).flat() : []
 
   // Get available words (not yet placed)
-  const availableWords = puzzle.words.filter(word => !placedWords.includes(word))
+  const availableWords = puzzle ? puzzle.words.filter(word => !placedWords.includes(word)) : []
 
   // Handle word click from word bank
   const handleWordClick = (word) => {
@@ -57,7 +78,6 @@ function App() {
 
   // Check solution
   const handleCheckSolution = () => {
-    // Import and use solution checker
     const isCorrect = checkSolution(placements, puzzle.solution)
 
     if (isCorrect) {
@@ -76,6 +96,42 @@ function App() {
       setResultMessage('💡 Solution revealed')
     }
     setShowSolution(!showSolution)
+  }
+
+  // Handle loading state
+  if (loading) {
+    return (
+      <div className="app">
+        <header className="header">
+          <h1>Triple Venn Puzzle</h1>
+          <p className="instructions">Loading today's puzzle...</p>
+        </header>
+      </div>
+    )
+  }
+
+  // Handle error state
+  if (error) {
+    return (
+      <div className="app">
+        <header className="header">
+          <h1>Triple Venn Puzzle</h1>
+          <p className="instructions error">{error}</p>
+        </header>
+      </div>
+    )
+  }
+
+  // Handle missing puzzle
+  if (!puzzle) {
+    return (
+      <div className="app">
+        <header className="header">
+          <h1>Triple Venn Puzzle</h1>
+          <p className="instructions">No puzzle available for today.</p>
+        </header>
+      </div>
+    )
   }
 
   return (
@@ -125,15 +181,6 @@ function checkSolution(placements, correctSolution) {
   // Check if all 14 words are placed
   const placedCount = Object.values(placements).flat().length
   if (placedCount !== 14) return false
-
-  // Normalize zone keys (e.g., "1-2" and "2-1" are the same)
-  const normalizeZone = (zone) => {
-    const parts = zone.split('-').map(Number).filter(n => !isNaN(n)).sort()
-    if (parts.length === 0) return zone // 'center' or 'only-X'
-    if (zone.startsWith('only-')) return zone
-    if (zone === 'center') return zone
-    return parts.join('-')
-  }
 
   // Generate all 6 permutations of circle assignments
   const permutations = [
