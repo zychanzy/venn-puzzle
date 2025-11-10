@@ -1,25 +1,28 @@
 {
-  "circles": ["Things That Fly", "Colors", "Metals", "Card Games"],
+  "circles": ["Things That Fly", "Primary Colors", "Metals"],
   "words": [
     "Plane",
-    "Violet",
+    "Helicopter",
+    "Red",
+    "Crimson",
     "Iron",
-    "Hearts",
+    "Steel",
     "Blue",
+    "Azure",
     "Silver",
-    "Diamond",
-    "Spade",
-    "Ace"
+    "Platinum",
+    "Yellow",
+    "Amber",
+    "Gold",
+    "Bronze"
   ],
   "solution": {
-    "1": "Plane",
-    "2": "Violet",
-    "3": "Iron",
-    "4": "Hearts",
-    "12": "Blue",
-    "13": "Silver",
-    "24": "Diamond",
-    "34": "Spade",
-    "1234": "Ace"
+    "1": ["Plane", "Helicopter"],
+    "2": ["Blue", "Azure"],
+    "3": ["Iron", "Steel"],
+    "12": ["Red", "Crimson"],
+    "13": ["Silver", "Platinum"],
+    "23": ["Yellow", "Amber"],
+    "123": ["Gold", "Bronze"]
   }
 }
