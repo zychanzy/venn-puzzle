@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import './App.css'
-import VennDiagram from './components/VennDiagram'
+import GridDiagram from './components/GridDiagram'
 import WordBank from './components/WordBank'
 import Controls from './components/Controls'
 import { fetchTodaysPuzzle } from './utils/dateUtils'
@@ -101,10 +101,10 @@ function App() {
   // Handle loading state
   if (loading) {
     return (
-      <div className="app">
-        <header className="header">
-          <h1>Triangle Venn Puzzle</h1>
-          <p className="instructions">Loading today's puzzle...</p>
+      <div className="max-w-[1200px] mx-auto p-5 min-h-screen">
+        <header className="text-center text-[#1a1a1a] mb-10 pt-10">
+          <h1 className="text-4xl mb-3 font-light tracking-tight">4-Theme Grid Puzzle</h1>
+          <p className="text-base text-gray-600 font-light leading-relaxed">Loading today's puzzle...</p>
         </header>
       </div>
     )
@@ -113,10 +113,10 @@ function App() {
   // Handle error state
   if (error) {
     return (
-      <div className="app">
-        <header className="header">
-          <h1>Triangle Venn Puzzle</h1>
-          <p className="instructions error">{error}</p>
+      <div className="max-w-[1200px] mx-auto p-5 min-h-screen">
+        <header className="text-center text-[#1a1a1a] mb-10 pt-10">
+          <h1 className="text-4xl mb-3 font-light tracking-tight">4-Theme Grid Puzzle</h1>
+          <p className="text-base text-red-600 font-light leading-relaxed">{error}</p>
         </header>
       </div>
     )
@@ -125,32 +125,36 @@ function App() {
   // Handle missing puzzle
   if (!puzzle) {
     return (
-      <div className="app">
-        <header className="header">
-          <h1>Triangle Venn Puzzle</h1>
-          <p className="instructions">No puzzle available for today.</p>
+      <div className="max-w-[1200px] mx-auto p-5 min-h-screen">
+        <header className="text-center text-[#1a1a1a] mb-10 pt-10">
+          <h1 className="text-4xl mb-3 font-light tracking-tight">4-Theme Grid Puzzle</h1>
+          <p className="text-base text-gray-600 font-light leading-relaxed">No puzzle available for today.</p>
         </header>
       </div>
     )
   }
 
   return (
-    <div className="app">
-      <header className="header">
-        <h1>4-Theme Grid Puzzle</h1>
-        <p className="instructions">
+    <div className="max-w-[1200px] mx-auto p-5 min-h-screen">
+      <header className="text-center text-[#1a1a1a] mb-10 pt-10">
+        <h1 className="text-4xl mb-3 font-light tracking-tight">4-Theme Grid Puzzle</h1>
+        <p className="text-base text-gray-600 font-light leading-relaxed">
           Deduce the four hidden themes and place all 9 words correctly.
           {!showThemes && ' Click a zone to select it, then click a word to place it.'}
         </p>
       </header>
 
       {resultMessage && (
-        <div className={`result-message ${resultMessage.includes('Correct!') ? 'success' : 'info'}`}>
+        <div className={`px-6 py-4 rounded text-center text-base font-normal border mb-6 ${
+          resultMessage.includes('Correct!')
+            ? 'bg-[#1a1a1a] text-white border-[#1a1a1a]'
+            : 'bg-white text-gray-600 border-gray-200'
+        }`}>
           {resultMessage}
         </div>
       )}
 
-      <VennDiagram
+      <GridDiagram
         circles={puzzle.circles}
         placements={placements}
         selectedZone={selectedZone}

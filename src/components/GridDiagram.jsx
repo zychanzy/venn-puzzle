@@ -1,6 +1,6 @@
 import React from 'react'
 
-const VennDiagram = ({
+const GridDiagram = ({
   circles,
   placements,
   selectedZone,
@@ -60,33 +60,56 @@ const VennDiagram = ({
     return { ...gradients[zoneId], color: 'white' }
   }
 
+  // Helper to get dot color classes
+  const getDotColor = (color) => {
+    const colors = {
+      red: 'bg-theme-red',
+      blue: 'bg-theme-blue',
+      green: 'bg-theme-green',
+      yellow: 'bg-theme-yellow'
+    }
+    return colors[color]
+  }
+
+  // Helper to get theme box gradient classes
+  const getThemeBoxClass = (index) => {
+    const gradients = [
+      'bg-gradient-to-br from-theme-red-light to-theme-red',
+      'bg-gradient-to-br from-theme-blue-light to-theme-blue',
+      'bg-gradient-to-br from-theme-green-light to-theme-green',
+      'bg-gradient-to-br from-theme-yellow-light to-theme-yellow'
+    ]
+    return gradients[index]
+  }
+
   return (
-    <div className="venn-diagram-container">
-      {/* Four Theme Circles in a Row */}
-      <div className="themes-row">
-        <div className="theme-circle theme-1">
-          <div className="theme-label">{showThemes ? circles[0] : '???'}</div>
-        </div>
-        <div className="theme-circle theme-2">
-          <div className="theme-label">{showThemes ? circles[1] : '???'}</div>
-        </div>
-        <div className="theme-circle theme-3">
-          <div className="theme-label">{showThemes ? circles[2] : '???'}</div>
-        </div>
-        <div className="theme-circle theme-4">
-          <div className="theme-label">{showThemes ? circles[3] : '???'}</div>
-        </div>
+    <div className="bg-white rounded-sm p-10 mb-6 border border-gray-200">
+      {/* Four Theme Rectangles in 2x2 Grid */}
+      <div className="grid grid-cols-2 gap-3 max-w-[400px] mx-auto mb-8">
+        {[0, 1, 2, 3].map(i => (
+          <div
+            key={i}
+            className={`h-[60px] rounded-lg flex items-center justify-center border-2 border-gray-300 p-2 ${getThemeBoxClass(i)}`}
+          >
+            <div className="font-semibold text-[11px] text-white text-center max-w-full overflow-hidden text-ellipsis leading-tight drop-shadow">
+              {showThemes ? circles[i] : '???'}
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Selected Zone Banner */}
       {selectedZone && (
-        <div className="selected-zone-banner" style={getBannerStyle(selectedZone)}>
+        <div
+          className="mt-5 px-5 py-3 text-[#1a1a1a] rounded-sm text-center text-sm font-normal border border-gray-200"
+          style={getBannerStyle(selectedZone)}
+        >
           Selected: <strong>{getZoneLabel(selectedZone)}</strong>
         </div>
       )}
 
       {/* 3×3 Grid */}
-      <div className="grid-container">
+      <div className="grid grid-cols-3 gap-3 max-w-[500px] mx-auto">
         {zones.map(zone => {
           const word = placements[zone.id]
           const isSelected = selectedZone === zone.id
@@ -94,20 +117,28 @@ const VennDiagram = ({
           return (
             <div
               key={zone.id}
-              className={`zone ${zone.gridPos} ${isSelected ? 'selected' : ''}`}
+              className={`
+                border-2 border-gray-300 rounded-xl bg-white p-3 min-h-[120px]
+                flex flex-wrap gap-2 content-start cursor-pointer transition-all duration-200
+                relative hover:bg-gray-50 hover:scale-[1.02] hover:border-gray-600
+                ${isSelected ? 'bg-blue-50 shadow-[0_0_15px_rgba(33,150,243,0.3)] scale-[1.02] border-blue-600' : ''}
+              `}
               onClick={() => onZoneClick(zone.id)}
             >
               {/* Colored dots indicator */}
-              <div className="zone-indicator">
+              <div className="absolute top-2 right-2 flex gap-1">
                 {zone.dots.map(color => (
-                  <div key={color} className={`dot dot-${color}`}></div>
+                  <div
+                    key={color}
+                    className={`w-3 h-3 rounded-full shadow-md ${getDotColor(color)}`}
+                  />
                 ))}
               </div>
 
               {/* Placed word */}
               {word && (
                 <div
-                  className="word-chip placed"
+                  className="px-3.5 py-2 rounded-sm font-light text-xs bg-white text-gray-600 border border-gray-200 cursor-pointer transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a]"
                   onClick={(e) => {
                     e.stopPropagation()
                     onWordClick(word, zone.id)
@@ -124,4 +155,4 @@ const VennDiagram = ({
   )
 }
 
-export default VennDiagram
+export default GridDiagram
