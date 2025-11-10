@@ -8,61 +8,118 @@ const VennDiagram = ({
   onZoneClick,
   onWordClick
 }) => {
+  // 3×3 Grid zones configuration for 4 themes
   const zones = [
-    { id: 'only-1', label: showThemes ? circles[0] : '???', position: 'top-left' },
-    { id: 'only-2', label: showThemes ? circles[1] : '???', position: 'top-right' },
-    { id: 'only-3', label: showThemes ? circles[2] : '???', position: 'bottom' },
-    { id: '1-2', label: '1 & 2', position: 'top-center' },
-    { id: '1-3', label: '1 & 3', position: 'left-center' },
-    { id: '2-3', label: '2 & 3', position: 'right-center' },
-    { id: 'center', label: 'All Three', position: 'center' }
+    // Row 1
+    { id: '1', categories: [1], type: 'single', gridPos: 'zone-1', dots: ['red'] },
+    { id: '12', categories: [1, 2], type: 'double', gridPos: 'zone-12', dots: ['red', 'blue'] },
+    { id: '2', categories: [2], type: 'single', gridPos: 'zone-2', dots: ['blue'] },
+    // Row 2
+    { id: '13', categories: [1, 3], type: 'double', gridPos: 'zone-13', dots: ['red', 'green'] },
+    { id: '1234', categories: [1, 2, 3, 4], type: 'quad', gridPos: 'zone-1234', dots: ['red', 'blue', 'green', 'yellow'] },
+    { id: '24', categories: [2, 4], type: 'double', gridPos: 'zone-24', dots: ['blue', 'yellow'] },
+    // Row 3
+    { id: '3', categories: [3], type: 'single', gridPos: 'zone-3', dots: ['green'] },
+    { id: '34', categories: [3, 4], type: 'double', gridPos: 'zone-34', dots: ['green', 'yellow'] },
+    { id: '4', categories: [4], type: 'single', gridPos: 'zone-4', dots: ['yellow'] }
   ]
+
+  // Get zone label for selected banner
+  const getZoneLabel = (zoneId) => {
+    const zone = zones.find(z => z.id === zoneId)
+    if (!zone) return ''
+
+    if (zone.type === 'single') {
+      const catName = showThemes ? circles[zone.categories[0] - 1] : `Theme ${zone.categories[0]}`
+      return `${catName} Only`
+    } else if (zone.type === 'double') {
+      const cats = zone.categories.map(c => showThemes ? circles[c - 1] : `Theme ${c}`)
+      return cats.join(' + ')
+    } else if (zone.type === 'quad') {
+      return 'All Four Themes'
+    }
+  }
+
+  // Get banner background style based on zone
+  const getBannerStyle = (zoneId) => {
+    const zone = zones.find(z => z.id === zoneId)
+    if (!zone) return {}
+
+    const gradients = {
+      '1': { background: 'linear-gradient(135deg, #ff6b9d 0%, #ff1744 100%)' },
+      '2': { background: 'linear-gradient(135deg, #4facfe 0%, #1976d2 100%)' },
+      '3': { background: 'linear-gradient(135deg, #66bb6a 0%, #4caf50 100%)' },
+      '4': { background: 'linear-gradient(135deg, #ffd93d 0%, #ffb300 100%)' },
+      '12': { background: 'linear-gradient(135deg, #ff1744 0%, #1976d2 100%)' },
+      '13': { background: 'linear-gradient(135deg, #ff1744 0%, #4caf50 100%)' },
+      '24': { background: 'linear-gradient(135deg, #1976d2 0%, #ffb300 100%)' },
+      '34': { background: 'linear-gradient(135deg, #4caf50 0%, #ffb300 100%)' },
+      '1234': { background: 'linear-gradient(135deg, #ff1744 0%, #1976d2 33%, #4caf50 66%, #ffb300 100%)' }
+    }
+
+    return { ...gradients[zoneId], color: 'white' }
+  }
 
   return (
     <div className="venn-diagram-container">
-      <div className="venn-diagram">
-        {/* SVG Circles */}
-        <svg className="venn-svg" viewBox="0 0 500 450">
-          <circle cx="190" cy="160" r="145" className="circle circle-1" />
-          <circle cx="310" cy="160" r="145" className="circle circle-2" />
-          <circle cx="250" cy="275" r="145" className="circle circle-3" />
-        </svg>
+      {/* Four Theme Circles in a Row */}
+      <div className="themes-row">
+        <div className="theme-circle theme-1">
+          <div className="theme-label">{showThemes ? circles[0] : '???'}</div>
+        </div>
+        <div className="theme-circle theme-2">
+          <div className="theme-label">{showThemes ? circles[1] : '???'}</div>
+        </div>
+        <div className="theme-circle theme-3">
+          <div className="theme-label">{showThemes ? circles[2] : '???'}</div>
+        </div>
+        <div className="theme-circle theme-4">
+          <div className="theme-label">{showThemes ? circles[3] : '???'}</div>
+        </div>
+      </div>
 
-        {/* Interactive Zones */}
+      {/* Selected Zone Banner */}
+      {selectedZone && (
+        <div className="selected-zone-banner" style={getBannerStyle(selectedZone)}>
+          Selected: <strong>{getZoneLabel(selectedZone)}</strong>
+        </div>
+      )}
+
+      {/* 3×3 Grid */}
+      <div className="grid-container">
         {zones.map(zone => {
-          const words = placements[zone.id] || []
+          const word = placements[zone.id]
           const isSelected = selectedZone === zone.id
 
           return (
             <div
               key={zone.id}
-              className={`zone zone-${zone.position} ${isSelected ? 'selected' : ''}`}
+              className={`zone ${zone.gridPos} ${isSelected ? 'selected' : ''}`}
               onClick={() => onZoneClick(zone.id)}
             >
-              <div className="zone-words">
-                {words.map(word => (
-                  <div
-                    key={word}
-                    className="word-chip placed"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onWordClick(word, zone.id)
-                    }}
-                  >
-                    {word}
-                  </div>
+              {/* Colored dots indicator */}
+              <div className="zone-indicator">
+                {zone.dots.map(color => (
+                  <div key={color} className={`dot dot-${color}`}></div>
                 ))}
               </div>
+
+              {/* Placed word */}
+              {word && (
+                <div
+                  className="word-chip placed"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onWordClick(word, zone.id)
+                  }}
+                >
+                  {word}
+                </div>
+              )}
             </div>
           )
         })}
       </div>
-
-      {selectedZone && (
-        <div className="selected-zone-banner">
-          Selected Zone: <strong>{zones.find(z => z.id === selectedZone)?.label}</strong>
-        </div>
-      )}
     </div>
   )
 }

@@ -34,8 +34,8 @@ function App() {
     loadPuzzle()
   }, [])
 
-  // Get all placed words
-  const placedWords = puzzle ? Object.values(placements).flat() : []
+  // Get all placed words (now 1 per zone instead of arrays)
+  const placedWords = puzzle ? Object.values(placements).filter(w => w !== null) : []
 
   // Get available words (not yet placed)
   const availableWords = puzzle ? puzzle.words.filter(word => !placedWords.includes(word)) : []
@@ -47,10 +47,10 @@ function App() {
       return
     }
 
-    // Add word to selected zone
+    // If zone already has a word, return it to the word bank first
     setPlacements(prev => ({
       ...prev,
-      [selectedZone]: [...(prev[selectedZone] || []), word]
+      [selectedZone]: word
     }))
   }
 
@@ -58,7 +58,7 @@ function App() {
   const handlePlacedWordClick = (word, zone) => {
     setPlacements(prev => ({
       ...prev,
-      [zone]: prev[zone].filter(w => w !== word)
+      [zone]: null
     }))
   }
 
@@ -81,10 +81,10 @@ function App() {
     const isCorrect = checkSolution(placements, puzzle.solution)
 
     if (isCorrect) {
-      setResultMessage('🎉 Congratulations! You solved the puzzle!')
+      setResultMessage('Correct! You solved the puzzle.')
       setShowThemes(true)
     } else {
-      setResultMessage('❌ Not quite right. Keep trying!')
+      setResultMessage('Not quite right. Keep trying.')
     }
   }
 
@@ -93,7 +93,7 @@ function App() {
     if (!showSolution) {
       setPlacements(puzzle.solution)
       setShowThemes(true)
-      setResultMessage('💡 Solution revealed')
+      setResultMessage('Solution revealed')
     }
     setShowSolution(!showSolution)
   }
@@ -103,7 +103,7 @@ function App() {
     return (
       <div className="app">
         <header className="header">
-          <h1>Triple Venn Puzzle</h1>
+          <h1>Triangle Venn Puzzle</h1>
           <p className="instructions">Loading today's puzzle...</p>
         </header>
       </div>
@@ -115,7 +115,7 @@ function App() {
     return (
       <div className="app">
         <header className="header">
-          <h1>Triple Venn Puzzle</h1>
+          <h1>Triangle Venn Puzzle</h1>
           <p className="instructions error">{error}</p>
         </header>
       </div>
@@ -127,7 +127,7 @@ function App() {
     return (
       <div className="app">
         <header className="header">
-          <h1>Triple Venn Puzzle</h1>
+          <h1>Triangle Venn Puzzle</h1>
           <p className="instructions">No puzzle available for today.</p>
         </header>
       </div>
@@ -137,15 +137,15 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>Triple Venn Puzzle</h1>
+        <h1>4-Theme Grid Puzzle</h1>
         <p className="instructions">
-          Place all 14 words into the correct zones of the Venn diagram.
-          {!showThemes && ' Can you figure out the three hidden themes?'}
+          Deduce the four hidden themes and place all 9 words correctly.
+          {!showThemes && ' Click a zone to select it, then click a word to place it.'}
         </p>
       </header>
 
       {resultMessage && (
-        <div className={`result-message ${resultMessage.includes('🎉') ? 'success' : 'info'}`}>
+        <div className={`result-message ${resultMessage.includes('Correct!') ? 'success' : 'info'}`}>
           {resultMessage}
         </div>
       )}
@@ -176,15 +176,20 @@ function App() {
   )
 }
 
-// Solution checker function
+// Solution checker function for 4 themes
 function checkSolution(placements, correctSolution) {
-  // Check if all 14 words are placed
-  const placedCount = Object.values(placements).flat().length
-  if (placedCount !== 14) return false
+  // Check if all 9 words are placed
+  const placedCount = Object.values(placements).filter(w => w !== null).length
+  if (placedCount !== 9) return false
 
-  // Generate all 6 permutations of circle assignments
+  // Generate all 24 permutations of 4 themes (4! = 24)
   const permutations = [
-    [1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]
+    [1, 2, 3, 4], [1, 2, 4, 3], [1, 3, 2, 4], [1, 3, 4, 2],
+    [1, 4, 2, 3], [1, 4, 3, 2], [2, 1, 3, 4], [2, 1, 4, 3],
+    [2, 3, 1, 4], [2, 3, 4, 1], [2, 4, 1, 3], [2, 4, 3, 1],
+    [3, 1, 2, 4], [3, 1, 4, 2], [3, 2, 1, 4], [3, 2, 4, 1],
+    [3, 4, 1, 2], [3, 4, 2, 1], [4, 1, 2, 3], [4, 1, 3, 2],
+    [4, 2, 1, 3], [4, 2, 3, 1], [4, 3, 1, 2], [4, 3, 2, 1]
   ]
 
   // Try each permutation
@@ -193,34 +198,32 @@ function checkSolution(placements, correctSolution) {
 
     // Map zones according to this permutation
     const mappedSolution = {}
-    for (const [zone, words] of Object.entries(correctSolution)) {
+    for (const [zone, word] of Object.entries(correctSolution)) {
       let mappedZone = zone
 
-      if (zone.startsWith('only-')) {
-        const circleNum = parseInt(zone.split('-')[1])
-        mappedZone = `only-${perm[circleNum - 1]}`
-      } else if (zone.includes('-') && zone !== 'center') {
-        const circles = zone.split('-').map(Number)
-        const mappedCircles = circles.map(c => perm[c - 1]).sort()
-        mappedZone = mappedCircles.join('-')
+      // Handle single theme zones (e.g., '1', '2', '3', '4')
+      if (zone.length === 1) {
+        const themeNum = parseInt(zone)
+        mappedZone = perm[themeNum - 1].toString()
       }
-      // 'center' stays as 'center'
+      // Handle two-theme zones (e.g., '12', '13', '24', '34')
+      else if (zone.length === 2) {
+        const themes = zone.split('').map(Number)
+        const mappedThemes = themes.map(t => perm[t - 1]).sort()
+        mappedZone = mappedThemes.join('')
+      }
+      // Handle four-theme center zone ('1234')
+      else if (zone === '1234') {
+        mappedZone = '1234' // All four always maps to all four
+      }
 
-      mappedSolution[mappedZone] = words
+      mappedSolution[mappedZone] = word
     }
 
     // Compare this permutation with player's placements
-    for (const [zone, words] of Object.entries(mappedSolution)) {
-      const playerWords = placements[zone] || []
-      if (playerWords.length !== words.length) {
-        isMatch = false
-        break
-      }
-
-      // Check if all words match (order doesn't matter)
-      const sortedPlayer = [...playerWords].sort()
-      const sortedCorrect = [...words].sort()
-      if (!sortedPlayer.every((w, i) => w === sortedCorrect[i])) {
+    for (const [zone, word] of Object.entries(mappedSolution)) {
+      const playerWord = placements[zone]
+      if (playerWord !== word) {
         isMatch = false
         break
       }

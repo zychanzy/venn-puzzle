@@ -6,7 +6,7 @@ const WordBank = ({ words, selectedZone, onWordClick }) => {
       <div className="word-bank">
         <h3>Word Bank</h3>
         <div className="word-bank-empty">
-          ✓ All words placed!
+          All words placed
         </div>
       </div>
     )
@@ -14,7 +14,7 @@ const WordBank = ({ words, selectedZone, onWordClick }) => {
 
   return (
     <div className="word-bank">
-      <h3>Word Bank ({words.length} remaining)</h3>
+      <h3>Word Bank — {words.length} Remaining</h3>
       {!selectedZone && (
         <p className="hint">Click a zone in the diagram first, then click a word to place it.</p>
       )}

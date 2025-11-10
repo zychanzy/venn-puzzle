@@ -1,28 +1,25 @@
 {
-  "circles": ["Red", "Round", "Edible"],
+  "circles": ["Things That Fly", "Colors", "Metals", "Card Games"],
   "words": [
-    "Fire Truck",
-    "Ruby",
-    "Basketball",
-    "Globe",
-    "Bread",
-    "Cheese",
-    "Red Ball",
-    "Red Balloon",
-    "Apple Juice",
-    "Watermelon Juice",
-    "Cherry Candy",
-    "Red Gumball",
-    "Apple",
-    "Tomato"
+    "Plane",
+    "Violet",
+    "Iron",
+    "Hearts",
+    "Blue",
+    "Silver",
+    "Diamond",
+    "Spade",
+    "Ace"
   ],
   "solution": {
-    "only-1": ["Fire Truck", "Ruby"],
-    "only-2": ["Basketball", "Globe"],
-    "only-3": ["Bread", "Cheese"],
-    "1-2": ["Red Ball", "Red Balloon"],
-    "1-3": ["Apple Juice", "Watermelon Juice"],
-    "2-3": ["Cherry Candy", "Red Gumball"],
-    "center": ["Apple", "Tomato"]
+    "1": "Plane",
+    "2": "Violet",
+    "3": "Iron",
+    "4": "Hearts",
+    "12": "Blue",
+    "13": "Silver",
+    "24": "Diamond",
+    "34": "Spade",
+    "1234": "Ace"
   }
 }
