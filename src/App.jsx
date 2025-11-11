@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import "./App.css";
 import GridDiagram from "./components/GridDiagram";
 import WordBank from "./components/WordBank";
 import Controls from "./components/Controls";
