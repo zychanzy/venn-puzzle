@@ -7,6 +7,27 @@
   --color-theme-blue-light: #4facfe;
   --color-theme-yellow: #ffb300;
   --color-theme-yellow-light: #ffd93d;
+
+  /* Custom animation for pulsing bright effect */
+  --animate-pulse-bright: pulse-bright 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Keyframe animation for bright pulsing - more subtle */
+@keyframes pulse-bright {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.02);
+  }
+}
+
+/* Utility class to ensure synchronized animation */
+.animate-pulse-bright {
+  animation: pulse-bright 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation-delay: 0s;
 }
 
 * {

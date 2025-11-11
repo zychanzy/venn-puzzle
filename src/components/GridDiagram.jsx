@@ -20,40 +20,6 @@ const GridDiagram = ({
     { id: '3', categories: [3], type: 'single', gridPos: 'zone-3', dots: ['yellow'] }
   ]
 
-  // Get zone label for selected banner
-  const getZoneLabel = (zoneId) => {
-    const zone = zones.find(z => z.id === zoneId)
-    if (!zone) return ''
-
-    if (zone.type === 'single') {
-      const catName = showThemes ? circles[zone.categories[0] - 1] : `Theme ${zone.categories[0]}`
-      return `${catName} Only`
-    } else if (zone.type === 'double') {
-      const cats = zone.categories.map(c => showThemes ? circles[c - 1] : `Theme ${c}`)
-      return cats.join(' + ')
-    } else if (zone.type === 'triple') {
-      return 'All Three Themes'
-    }
-  }
-
-  // Get banner background style based on zone
-  const getBannerStyle = (zoneId) => {
-    const zone = zones.find(z => z.id === zoneId)
-    if (!zone) return {}
-
-    const gradients = {
-      '1': { background: 'linear-gradient(135deg, #ff6b9d 0%, #ff1744 100%)' },
-      '2': { background: 'linear-gradient(135deg, #4facfe 0%, #1976d2 100%)' },
-      '3': { background: 'linear-gradient(135deg, #ffd93d 0%, #ffb300 100%)' },
-      '12': { background: 'linear-gradient(135deg, #ff1744 0%, #1976d2 100%)' },
-      '13': { background: 'linear-gradient(135deg, #ff1744 0%, #ffb300 100%)' },
-      '23': { background: 'linear-gradient(135deg, #1976d2 0%, #ffb300 100%)' },
-      '123': { background: 'linear-gradient(135deg, #ff1744 0%, #1976d2 50%, #ffb300 100%)' }
-    }
-
-    return { ...gradients[zoneId], color: 'white' }
-  }
-
   // Helper to get dot color classes
   const getDotColor = (color) => {
     const colors = {
@@ -74,20 +40,40 @@ const GridDiagram = ({
     return gradients[index]
   }
 
+  // Check if a theme index should be highlighted based on selected zone
+  const isThemeActive = (themeIndex) => {
+    if (!selectedZone) return false
+    const zone = zones.find(z => z.id === selectedZone)
+    if (!zone) return false
+    // themeIndex is 0-based, categories are 1-based
+    return zone.categories.includes(themeIndex + 1)
+  }
+
   return (
     <div className="bg-white rounded-sm p-4 sm:p-6 md:p-10 mb-6 border border-gray-200">
       {/* Three Theme Rectangles - Responsive Layout */}
       <div className="flex gap-2 sm:gap-3 max-w-[600px] mx-auto mb-6 sm:mb-8 md:mb-10 justify-center">
-        {[0, 1, 2].map(i => (
-          <div
-            key={i}
-            className={`h-[45px] sm:h-[60px] w-[110px] sm:w-[180px] rounded-lg flex items-center justify-center border-2 border-gray-300 p-2 ${getThemeBoxClass(i)}`}
-          >
-            <div className="font-semibold text-[9px] sm:text-[11px] text-white text-center max-w-full overflow-hidden text-ellipsis leading-tight drop-shadow">
-              {showThemes ? circles[i] : '???'}
+        {[0, 1, 2].map(i => {
+          const isActive = isThemeActive(i)
+          const hasSelection = selectedZone !== null
+
+          return (
+            <div
+              key={`${i}-${selectedZone || 'none'}`}
+              className={`
+                h-[45px] sm:h-[60px] w-[110px] sm:w-[180px] rounded-lg flex items-center justify-center border-2 p-2
+                ${getThemeBoxClass(i)}
+                ${isActive ? 'border-white animate-pulse-bright shadow-[0_0_20px_rgba(255,255,255,0.8)]' : 'border-gray-300'}
+                ${hasSelection && !isActive ? 'opacity-30' : 'opacity-100'}
+                transition-opacity duration-300
+              `}
+            >
+              <div className="font-semibold text-[9px] sm:text-[11px] text-white text-center max-w-full overflow-hidden text-ellipsis leading-tight drop-shadow">
+                {showThemes ? circles[i] : '???'}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       {/* Triangle Grid Layout */}
@@ -105,7 +91,7 @@ const GridDiagram = ({
                   border-2 border-gray-300 rounded-xl bg-white p-2 sm:p-3 min-h-[90px] sm:min-h-[120px] w-[110px] sm:w-[180px]
                   flex flex-wrap gap-1.5 sm:gap-2 content-start cursor-pointer transition-all duration-200
                   relative hover:bg-gray-50 hover:scale-[1.02] hover:border-gray-600
-                  ${isSelected ? 'bg-blue-50 shadow-[0_0_15px_rgba(33,150,243,0.3)] scale-[1.02] border-blue-600' : ''}
+                  ${isSelected ? 'bg-gray-50 shadow-[0_0_15px_rgba(33,150,243,0.3)] scale-[1.02] border-gray-600' : ''}
                 `}
                 onClick={() => onZoneClick(zone.id)}
               >
@@ -150,7 +136,7 @@ const GridDiagram = ({
                   border-2 border-gray-300 rounded-xl bg-white p-2 sm:p-3 min-h-[90px] sm:min-h-[120px] w-[110px] sm:w-[180px]
                   flex flex-wrap gap-1.5 sm:gap-2 content-start cursor-pointer transition-all duration-200
                   relative hover:bg-gray-50 hover:scale-[1.02] hover:border-gray-600
-                  ${isSelected ? 'bg-blue-50 shadow-[0_0_15px_rgba(33,150,243,0.3)] scale-[1.02] border-blue-600' : ''}
+                  ${isSelected ? 'bg-gray-50 shadow-[0_0_15px_rgba(33,150,243,0.3)] scale-[1.02] border-gray-600' : ''}
                 `}
                 onClick={() => onZoneClick(zone.id)}
               >
@@ -195,7 +181,7 @@ const GridDiagram = ({
                   border-2 border-gray-300 rounded-xl bg-white p-2 sm:p-3 min-h-[90px] sm:min-h-[120px] w-[110px] sm:w-[180px]
                   flex flex-wrap gap-1.5 sm:gap-2 content-start cursor-pointer transition-all duration-200
                   relative hover:bg-gray-50 hover:scale-[1.02] hover:border-gray-600
-                  ${isSelected ? 'bg-blue-50 shadow-[0_0_15px_rgba(33,150,243,0.3)] scale-[1.02] border-blue-600' : ''}
+                  ${isSelected ? 'bg-gray-50 shadow-[0_0_15px_rgba(33,150,243,0.3)] scale-[1.02] border-gray-600' : ''}
                 `}
                 onClick={() => onZoneClick(zone.id)}
               >
@@ -227,16 +213,6 @@ const GridDiagram = ({
           })}
         </div>
       </div>
-
-      {/* Selected Zone Banner */}
-      {selectedZone && (
-        <div
-          className="mt-4 sm:mt-6 px-3 sm:px-5 py-2 sm:py-3 text-white rounded-sm text-center text-xs sm:text-sm font-normal border-0"
-          style={getBannerStyle(selectedZone)}
-        >
-          Selected: <strong>{getZoneLabel(selectedZone)}</strong>
-        </div>
-      )}
     </div>
   )
 }

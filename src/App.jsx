@@ -168,7 +168,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-red-400 flex flex-col items-center justify-center">
+    <div className="min-h-screen p-5 flex flex-col items-center justify-center">
       <div className="max-w-[1200px] w-full">
         <header className="text-center text-[#1a1a1a] mb-8">
           <h1 className="text-4xl mb-3 font-light tracking-tight">
