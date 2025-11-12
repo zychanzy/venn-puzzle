@@ -102,17 +102,38 @@ function App() {
   };
 
   // Handle word drop from drag and drop
-  const handleWordDrop = (word, zoneId) => {
+  const handleWordDrop = (word, zoneId, sourceZone) => {
     setPlacements((prev) => {
-      const currentWords = prev[zoneId] || [];
-      if (currentWords.length >= 2) {
-        return prev;
+      // If dragging from another zone, remove from source first
+      let newPlacements = { ...prev };
+
+      if (sourceZone) {
+        const sourceWords = newPlacements[sourceZone] || [];
+        newPlacements[sourceZone] = sourceWords.filter((w) => w !== word);
       }
-      return {
-        ...prev,
-        [zoneId]: [...currentWords, word],
-      };
+
+      // Add to target zone (max 2 words)
+      const currentWords = newPlacements[zoneId] || [];
+      if (currentWords.length >= 2) {
+        return prev; // Don't allow drop if zone is full
+      }
+
+      newPlacements[zoneId] = [...currentWords, word];
+      return newPlacements;
     });
+  };
+
+  // Handle word drop back to word bank
+  const handleWordReturnToBank = (word, sourceZone) => {
+    if (sourceZone) {
+      setPlacements((prev) => {
+        const sourceWords = prev[sourceZone] || [];
+        return {
+          ...prev,
+          [sourceZone]: sourceWords.filter((w) => w !== word),
+        };
+      });
+    }
   };
 
   // Handle placed word click (remove it)
@@ -124,6 +145,8 @@ function App() {
         [zone]: currentWords.filter((w) => w !== word),
       };
     });
+    // Select the zone when removing a word
+    setSelectedZone(zone);
   };
 
   // Handle zone selection
@@ -235,8 +258,10 @@ function App() {
 
         <WordBank
           words={availableWords}
+          allWords={puzzle.words}
           selectedZone={selectedZone}
           onWordClick={handleWordClick}
+          onWordReturn={handleWordReturnToBank}
         />
 
         <Controls

@@ -100,28 +100,23 @@ const GridDiagram = ({
 
   const handleDragEnter = (e) => {
     e.preventDefault();
-    e.currentTarget.classList.add("ring-2", "ring-blue-400", "ring-offset-2");
+    e.currentTarget.classList.add("ring-2", "ring-gray-600");
   };
 
   const handleDragLeave = (e) => {
-    e.currentTarget.classList.remove(
-      "ring-2",
-      "ring-blue-400",
-      "ring-offset-2"
-    );
+    e.currentTarget.classList.remove("ring-2", "ring-gray-600");
   };
 
   const handleDrop = (e, zoneId) => {
     e.preventDefault();
-    e.currentTarget.classList.remove(
-      "ring-2",
-      "ring-blue-400",
-      "ring-offset-2"
-    );
+    e.currentTarget.classList.remove("ring-2", "ring-gray-600");
 
     const word = e.dataTransfer.getData("text/plain");
+    const sourceZone = e.dataTransfer.getData("sourceZone");
     if (word && onWordDrop) {
-      onWordDrop(word, zoneId);
+      onWordDrop(word, zoneId, sourceZone || null);
+      // Auto-select the zone where the word was dropped
+      onZoneClick(zoneId);
     }
   };
 
@@ -199,7 +194,17 @@ const GridDiagram = ({
                 {words.map((word) => (
                   <div
                     key={word}
-                    className="w-full px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm font-light text-[11px] sm:text-xs bg-white text-gray-600 border border-gray-200 cursor-pointer transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a] text-center"
+                    draggable="true"
+                    onDragStart={(e) => {
+                      e.dataTransfer.effectAllowed = 'move';
+                      e.dataTransfer.setData('text/plain', word);
+                      e.dataTransfer.setData('sourceZone', zone.id);
+                      e.target.classList.add('opacity-50');
+                    }}
+                    onDragEnd={(e) => {
+                      e.target.classList.remove('opacity-50');
+                    }}
+                    className="w-full px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm font-light text-[11px] sm:text-xs bg-white text-gray-600 border border-gray-200 cursor-grab active:cursor-grabbing transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a] text-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       onWordClick(word, zone.id);
@@ -254,7 +259,17 @@ const GridDiagram = ({
                 {words.map((word) => (
                   <div
                     key={word}
-                    className="w-full px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm font-light text-[11px] sm:text-xs bg-white text-gray-600 border border-gray-200 cursor-pointer transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a] text-center"
+                    draggable="true"
+                    onDragStart={(e) => {
+                      e.dataTransfer.effectAllowed = 'move';
+                      e.dataTransfer.setData('text/plain', word);
+                      e.dataTransfer.setData('sourceZone', zone.id);
+                      e.target.classList.add('opacity-50');
+                    }}
+                    onDragEnd={(e) => {
+                      e.target.classList.remove('opacity-50');
+                    }}
+                    className="w-full px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm font-light text-[11px] sm:text-xs bg-white text-gray-600 border border-gray-200 cursor-grab active:cursor-grabbing transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a] text-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       onWordClick(word, zone.id);
@@ -309,7 +324,17 @@ const GridDiagram = ({
                 {words.map((word) => (
                   <div
                     key={word}
-                    className="w-full px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm font-light text-[11px] sm:text-xs bg-white text-gray-600 border border-gray-200 cursor-pointer transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a] text-center"
+                    draggable="true"
+                    onDragStart={(e) => {
+                      e.dataTransfer.effectAllowed = 'move';
+                      e.dataTransfer.setData('text/plain', word);
+                      e.dataTransfer.setData('sourceZone', zone.id);
+                      e.target.classList.add('opacity-50');
+                    }}
+                    onDragEnd={(e) => {
+                      e.target.classList.remove('opacity-50');
+                    }}
+                    className="w-full px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm font-light text-[11px] sm:text-xs bg-white text-gray-600 border border-gray-200 cursor-grab active:cursor-grabbing transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a] text-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       onWordClick(word, zone.id);
