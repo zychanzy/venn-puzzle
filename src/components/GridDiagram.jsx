@@ -5,6 +5,7 @@ const GridDiagram = ({
   showThemes,
   onZoneClick,
   onWordClick,
+  onWordDrop,
 }) => {
   // Triangle layout zones configuration for 3 themes
   const zones = [
@@ -14,7 +15,7 @@ const GridDiagram = ({
       categories: [1],
       type: "single",
       gridPos: "zone-1",
-      dots: ["red"],
+      dots: ["teal"],
     },
     // Middle row - 3 boxes
     {
@@ -22,21 +23,21 @@ const GridDiagram = ({
       categories: [1, 2],
       type: "double",
       gridPos: "zone-12",
-      dots: ["red", "blue"],
+      dots: ["teal", "purple"],
     },
     {
       id: "123",
       categories: [1, 2, 3],
       type: "triple",
       gridPos: "zone-123",
-      dots: ["red", "blue", "yellow"],
+      dots: ["teal", "purple", "orange"],
     },
     {
       id: "13",
       categories: [1, 3],
       type: "double",
       gridPos: "zone-13",
-      dots: ["red", "yellow"],
+      dots: ["teal", "orange"],
     },
     // Bottom row - 3 boxes (wider spacing)
     {
@@ -44,30 +45,30 @@ const GridDiagram = ({
       categories: [2],
       type: "single",
       gridPos: "zone-2",
-      dots: ["blue"],
+      dots: ["purple"],
     },
     {
       id: "23",
       categories: [2, 3],
       type: "double",
       gridPos: "zone-23",
-      dots: ["blue", "yellow"],
+      dots: ["purple", "orange"],
     },
     {
       id: "3",
       categories: [3],
       type: "single",
       gridPos: "zone-3",
-      dots: ["yellow"],
+      dots: ["orange"],
     },
   ];
 
   // Helper to get dot color classes
   const getDotColor = (color) => {
     const colors = {
-      red: "bg-theme-red",
-      blue: "bg-theme-blue",
-      yellow: "bg-theme-yellow",
+      teal: "bg-theme-teal",
+      purple: "bg-theme-purple",
+      orange: "bg-theme-orange",
     };
     return colors[color];
   };
@@ -75,9 +76,9 @@ const GridDiagram = ({
   // Helper to get theme box gradient classes
   const getThemeBoxClass = (index) => {
     const gradients = [
-      "bg-gradient-to-br from-theme-red-light to-theme-red",
-      "bg-gradient-to-br from-theme-blue-light to-theme-blue",
-      "bg-gradient-to-br from-theme-yellow-light to-theme-yellow",
+      "bg-gradient-to-br from-theme-teal-light to-theme-teal",
+      "bg-gradient-to-br from-theme-purple-light to-theme-purple",
+      "bg-gradient-to-br from-theme-orange-light to-theme-orange",
     ];
     return gradients[index];
   };
@@ -89,6 +90,39 @@ const GridDiagram = ({
     if (!zone) return false;
     // themeIndex is 0-based, categories are 1-based
     return zone.categories.includes(themeIndex + 1);
+  };
+
+  // Drag and drop handlers
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.currentTarget.classList.add("ring-2", "ring-blue-400", "ring-offset-2");
+  };
+
+  const handleDragLeave = (e) => {
+    e.currentTarget.classList.remove(
+      "ring-2",
+      "ring-blue-400",
+      "ring-offset-2"
+    );
+  };
+
+  const handleDrop = (e, zoneId) => {
+    e.preventDefault();
+    e.currentTarget.classList.remove(
+      "ring-2",
+      "ring-blue-400",
+      "ring-offset-2"
+    );
+
+    const word = e.dataTransfer.getData("text/plain");
+    if (word && onWordDrop) {
+      onWordDrop(word, zoneId);
+    }
   };
 
   return (
@@ -135,7 +169,7 @@ const GridDiagram = ({
                 key={zone.id}
                 className={`
                   border-2 border-gray-300 rounded-xl bg-white p-2 sm:p-3 min-h-[90px] sm:min-h-[120px] w-[110px] sm:w-[180px]
-                  flex flex-wrap gap-1.5 sm:gap-2 content-start cursor-pointer transition-all duration-200
+                  flex flex-col gap-1.5 sm:gap-2 cursor-pointer transition-all duration-200
                   relative hover:bg-gray-50 hover:scale-[1.02] hover:border-gray-600
                   ${
                     isSelected
@@ -144,6 +178,10 @@ const GridDiagram = ({
                   }
                 `}
                 onClick={() => onZoneClick(zone.id)}
+                onDragOver={handleDragOver}
+                onDragEnter={(e) => handleDragEnter(e, zone.id)}
+                onDragLeave={handleDragLeave}
+                onDrop={(e) => handleDrop(e, zone.id)}
               >
                 {/* Colored dots indicator */}
                 <div className="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 flex gap-0.5 sm:gap-1">
@@ -161,7 +199,7 @@ const GridDiagram = ({
                 {words.map((word) => (
                   <div
                     key={word}
-                    className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm font-light text-[11px] sm:text-xs bg-white text-gray-600 border border-gray-200 cursor-pointer transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a]"
+                    className="w-full px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm font-light text-[11px] sm:text-xs bg-white text-gray-600 border border-gray-200 cursor-pointer transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a] text-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       onWordClick(word, zone.id);
@@ -186,7 +224,7 @@ const GridDiagram = ({
                 key={zone.id}
                 className={`
                   border-2 border-gray-300 rounded-xl bg-white p-2 sm:p-3 min-h-[90px] sm:min-h-[120px] w-[110px] sm:w-[180px]
-                  flex flex-wrap gap-1.5 sm:gap-2 content-start cursor-pointer transition-all duration-200
+                  flex flex-col gap-1.5 sm:gap-2 cursor-pointer transition-all duration-200
                   relative hover:bg-gray-50 hover:scale-[1.02] hover:border-gray-600
                   ${
                     isSelected
@@ -195,6 +233,10 @@ const GridDiagram = ({
                   }
                 `}
                 onClick={() => onZoneClick(zone.id)}
+                onDragOver={handleDragOver}
+                onDragEnter={(e) => handleDragEnter(e, zone.id)}
+                onDragLeave={handleDragLeave}
+                onDrop={(e) => handleDrop(e, zone.id)}
               >
                 {/* Colored dots indicator */}
                 <div className="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 flex gap-0.5 sm:gap-1">
@@ -212,7 +254,7 @@ const GridDiagram = ({
                 {words.map((word) => (
                   <div
                     key={word}
-                    className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm font-light text-[11px] sm:text-xs bg-white text-gray-600 border border-gray-200 cursor-pointer transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a]"
+                    className="w-full px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm font-light text-[11px] sm:text-xs bg-white text-gray-600 border border-gray-200 cursor-pointer transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a] text-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       onWordClick(word, zone.id);
@@ -237,7 +279,7 @@ const GridDiagram = ({
                 key={zone.id}
                 className={`
                   border-2 border-gray-300 rounded-xl bg-white p-2 sm:p-3 min-h-[90px] sm:min-h-[120px] w-[110px] sm:w-[180px]
-                  flex flex-wrap gap-1.5 sm:gap-2 content-start cursor-pointer transition-all duration-200
+                  flex flex-col gap-1.5 sm:gap-2 cursor-pointer transition-all duration-200
                   relative hover:bg-gray-50 hover:scale-[1.02] hover:border-gray-600
                   ${
                     isSelected
@@ -246,6 +288,10 @@ const GridDiagram = ({
                   }
                 `}
                 onClick={() => onZoneClick(zone.id)}
+                onDragOver={handleDragOver}
+                onDragEnter={(e) => handleDragEnter(e, zone.id)}
+                onDragLeave={handleDragLeave}
+                onDrop={(e) => handleDrop(e, zone.id)}
               >
                 {/* Colored dots indicator */}
                 <div className="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 flex gap-0.5 sm:gap-1">
@@ -263,7 +309,7 @@ const GridDiagram = ({
                 {words.map((word) => (
                   <div
                     key={word}
-                    className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm font-light text-[11px] sm:text-xs bg-white text-gray-600 border border-gray-200 cursor-pointer transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a]"
+                    className="w-full px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm font-light text-[11px] sm:text-xs bg-white text-gray-600 border border-gray-200 cursor-pointer transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a] text-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       onWordClick(word, zone.id);

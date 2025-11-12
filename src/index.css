@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 @theme {
-  --color-theme-red: #ff1744;
-  --color-theme-red-light: #ff6b9d;
-  --color-theme-blue: #1976d2;
-  --color-theme-blue-light: #4facfe;
-  --color-theme-yellow: #ffb300;
-  --color-theme-yellow-light: #ffd93d;
+  --color-theme-teal: #008B8B;
+  --color-theme-teal-light: #20B2AA;
+  --color-theme-purple: #8B4789;
+  --color-theme-purple-light: #BA55D3;
+  --color-theme-orange: #FF8C00;
+  --color-theme-orange-light: #FFA500;
 
   /* Custom animation for pulsing bright effect */
   --animate-pulse-bright: pulse-bright 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
@@ -28,4 +28,20 @@
 .animate-pulse-bright {
   animation: pulse-bright 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   animation-delay: 0s;
+}
+
+/* Modal fade-in animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
 }

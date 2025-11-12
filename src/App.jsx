@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import GridDiagram from "./components/GridDiagram";
 import WordBank from "./components/WordBank";
 import Controls from "./components/Controls";
+import Modal from "./components/Modal";
 import { fetchTodaysPuzzle } from "./utils/dateUtils";
 
 function App() {
@@ -13,6 +14,9 @@ function App() {
   const [showThemes, setShowThemes] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
   const [resultMessage, setResultMessage] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [modalSuccess, setModalSuccess] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   // Load today's puzzle on mount
   useEffect(() => {
@@ -32,6 +36,37 @@ function App() {
 
     loadPuzzle();
   }, []);
+
+  // Auto-check solution when all words are placed
+  useEffect(() => {
+    if (!puzzle) return;
+
+    const placedCount = Object.values(placements)
+      .flat()
+      .filter((w) => w !== null).length;
+
+    // Check if all 14 words are placed
+    if (placedCount === 14) {
+      const isCorrect = checkSolution(placements, puzzle.solution);
+
+      if (isCorrect) {
+        setModalSuccess(true);
+        setModalMessage(
+          "You've successfully solved the puzzle! All words are in their correct zones."
+        );
+        setShowModal(true);
+        setShowThemes(true);
+        setResultMessage("Correct! You solved the puzzle.");
+      } else {
+        setModalSuccess(false);
+        setModalMessage(
+          "Not quite right. Some words are in the wrong zones. Try rearranging them!"
+        );
+        setShowModal(true);
+        setResultMessage("Not quite right. Keep trying.");
+      }
+    }
+  }, [placements, puzzle]);
 
   // Get all placed words (each zone can have multiple words)
   const placedWords = puzzle
@@ -66,6 +101,20 @@ function App() {
     });
   };
 
+  // Handle word drop from drag and drop
+  const handleWordDrop = (word, zoneId) => {
+    setPlacements((prev) => {
+      const currentWords = prev[zoneId] || [];
+      if (currentWords.length >= 2) {
+        return prev;
+      }
+      return {
+        ...prev,
+        [zoneId]: [...currentWords, word],
+      };
+    });
+  };
+
   // Handle placed word click (remove it)
   const handlePlacedWordClick = (word, zone) => {
     setPlacements((prev) => {
@@ -89,18 +138,7 @@ function App() {
     setShowThemes(false);
     setShowSolution(false);
     setResultMessage("");
-  };
-
-  // Check solution
-  const handleCheckSolution = () => {
-    const isCorrect = checkSolution(placements, puzzle.solution);
-
-    if (isCorrect) {
-      setResultMessage("Correct! You solved the puzzle.");
-      setShowThemes(true);
-    } else {
-      setResultMessage("Not quite right. Keep trying.");
-    }
+    setShowModal(false);
   };
 
   // Show/hide solution
@@ -137,9 +175,7 @@ function App() {
       <div className="min-h-screen flex flex-col items-center justify-center p-5">
         <div className="max-w-[1200px] w-full">
           <header className="text-center text-[#1a1a1a]">
-            <h1 className="text-4xl mb-3 font-light tracking-tight">
-              3-Theme Triangle Puzzle
-            </h1>
+            <h1 className="text-4xl mb-3 font-light tracking-tight">Trisect</h1>
             <p className="text-base text-red-600 font-light leading-relaxed">
               {error}
             </p>
@@ -155,9 +191,7 @@ function App() {
       <div className="min-h-screen flex flex-col items-center justify-center p-5">
         <div className="max-w-[1200px] w-full">
           <header className="text-center text-[#1a1a1a]">
-            <h1 className="text-4xl mb-3 font-light tracking-tight">
-              3-Theme Triangle Puzzle
-            </h1>
+            <h1 className="text-4xl mb-3 font-light tracking-tight">Trisect</h1>
             <p className="text-base text-gray-600 font-light leading-relaxed">
               No puzzle available for today.
             </p>
@@ -173,9 +207,7 @@ function App() {
         <header className="text-center text-[#1a1a1a] mb-8">
           <h1 className="text-4xl mb-3 font-light tracking-tight">Trisect</h1>
           <p className="text-base text-gray-600 font-light leading-relaxed">
-            Deduce the three hidden themes and place all 14 words correctly.
-            {!showThemes &&
-              " Click a zone to select it, then click a word to place it. Each zone needs 2 words."}
+            Discover three hidden themes and sort words by how many they match!
           </p>
         </header>
 
@@ -198,6 +230,7 @@ function App() {
           showThemes={showThemes}
           onZoneClick={handleZoneClick}
           onWordClick={handlePlacedWordClick}
+          onWordDrop={handleWordDrop}
         />
 
         <WordBank
@@ -207,11 +240,16 @@ function App() {
         />
 
         <Controls
-          onCheckSolution={handleCheckSolution}
           onReset={handleReset}
           onToggleSolution={handleToggleSolution}
           showSolution={showSolution}
-          allWordsPlaced={availableWords.length === 0}
+        />
+
+        <Modal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          isSuccess={modalSuccess}
+          message={modalMessage}
         />
       </div>
     </div>
