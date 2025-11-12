@@ -100,16 +100,16 @@ const GridDiagram = ({
 
   const handleDragEnter = (e) => {
     e.preventDefault();
-    e.currentTarget.classList.add("ring-2", "ring-gray-600");
+    e.currentTarget.classList.add("ring-2", "ring-gray-400");
   };
 
   const handleDragLeave = (e) => {
-    e.currentTarget.classList.remove("ring-2", "ring-gray-600");
+    e.currentTarget.classList.remove("ring-2", "ring-gray-400");
   };
 
   const handleDrop = (e, zoneId) => {
     e.preventDefault();
-    e.currentTarget.classList.remove("ring-2", "ring-gray-600");
+    e.currentTarget.classList.remove("ring-2", "ring-gray-400");
 
     const word = e.dataTransfer.getData("text/plain");
     const sourceZone = e.dataTransfer.getData("sourceZone");
@@ -122,8 +122,11 @@ const GridDiagram = ({
 
   return (
     <div className="bg-white rounded-sm p-4 sm:p-6 md:p-10 mb-6">
+      <p className="text-lg text-gray-600 leading-relaxed text-center mb-4">
+        Discover three hidden themes and sort words by how many they match!
+      </p>
       {/* Three Theme Rectangles - Responsive Layout */}
-      <div className="flex gap-2 sm:gap-3 max-w-[600px] mx-auto mb-6 sm:mb-8 md:mb-10 justify-center">
+      <div className="flex gap-2 sm:gap-3 max-w-[800px] mx-auto mb-6 sm:mb-8 md:mb-10 justify-center">
         {[0, 1, 2].map((i) => {
           const isActive = isThemeActive(i);
           const hasSelection = selectedZone !== null;
@@ -132,18 +135,18 @@ const GridDiagram = ({
             <div
               key={`${i}-${selectedZone || "none"}`}
               className={`
-                h-[45px] sm:h-[60px] w-[110px] sm:w-[180px] rounded-lg flex items-center justify-center border-2 p-2
+                h-[45px] sm:h-[60px] w-[110px] sm:w-[180px] rounded-lg flex items-center justify-center p-2
                 ${getThemeBoxClass(i)}
                 ${
                   isActive
-                    ? "border-white animate-pulse-bright shadow-[0_0_20px_rgba(255,255,255,0.8)]"
-                    : "border-gray-300"
+                    ? "animate-pulse-bright shadow-[0_0_20px_rgba(255,255,255,0.8)]"
+                    : ""
                 }
                 ${hasSelection && !isActive ? "opacity-30" : "opacity-100"}
                 transition-opacity duration-300
               `}
             >
-              <div className="font-semibold text-[9px] sm:text-[11px] text-white text-center max-w-full overflow-hidden text-ellipsis leading-tight drop-shadow">
+              <div className="font-semibold text-[12px] sm:text-[15px] text-white text-center max-w-full overflow-hidden text-ellipsis leading-tight drop-shadow">
                 {showThemes ? circles[i] : "???"}
               </div>
             </div>
@@ -152,7 +155,7 @@ const GridDiagram = ({
       </div>
 
       {/* Triangle Grid Layout */}
-      <div className="max-w-[600px] mx-auto">
+      <div className="max-w-[800px] mx-auto">
         {/* Top row - 1 box centered */}
         <div className="flex justify-center mb-2 sm:mb-3">
           {zones.slice(0, 1).map((zone) => {
@@ -165,12 +168,8 @@ const GridDiagram = ({
                 className={`
                   border-2 border-gray-300 rounded-xl bg-white p-2 sm:p-3 min-h-[90px] sm:min-h-[120px] w-[110px] sm:w-[180px]
                   flex flex-col gap-1.5 sm:gap-2 cursor-pointer transition-all duration-200
-                  relative hover:bg-gray-50 hover:scale-[1.02] hover:border-gray-600
-                  ${
-                    isSelected
-                      ? "bg-gray-50 shadow-[0_0_15px_rgba(33,150,243,0.3)] scale-[1.02] border-gray-600"
-                      : ""
-                  }
+                  relative hover:bg-gray-50 hover:scale-[1.02] hover:border-gray-400
+                  ${isSelected ? "bg-gray-50 scale-[1.02] border-gray-400" : ""}
                 `}
                 onClick={() => onZoneClick(zone.id)}
                 onDragOver={handleDragOver}
@@ -196,15 +195,15 @@ const GridDiagram = ({
                     key={word}
                     draggable="true"
                     onDragStart={(e) => {
-                      e.dataTransfer.effectAllowed = 'move';
-                      e.dataTransfer.setData('text/plain', word);
-                      e.dataTransfer.setData('sourceZone', zone.id);
-                      e.target.classList.add('opacity-50');
+                      e.dataTransfer.effectAllowed = "move";
+                      e.dataTransfer.setData("text/plain", word);
+                      e.dataTransfer.setData("sourceZone", zone.id);
+                      e.target.classList.add("opacity-50");
                     }}
                     onDragEnd={(e) => {
-                      e.target.classList.remove('opacity-50');
+                      e.target.classList.remove("opacity-50");
                     }}
-                    className="w-full px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm font-light text-[11px] sm:text-xs bg-white text-gray-600 border border-gray-200 cursor-grab active:cursor-grabbing transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a] text-center"
+                    className="w-full px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm font-light text-sm sm:text-base bg-white text-gray-600 border border-gray-200 cursor-grab active:cursor-grabbing transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a] text-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       onWordClick(word, zone.id);
@@ -230,12 +229,8 @@ const GridDiagram = ({
                 className={`
                   border-2 border-gray-300 rounded-xl bg-white p-2 sm:p-3 min-h-[90px] sm:min-h-[120px] w-[110px] sm:w-[180px]
                   flex flex-col gap-1.5 sm:gap-2 cursor-pointer transition-all duration-200
-                  relative hover:bg-gray-50 hover:scale-[1.02] hover:border-gray-600
-                  ${
-                    isSelected
-                      ? "bg-gray-50 shadow-[0_0_15px_rgba(33,150,243,0.3)] scale-[1.02] border-gray-600"
-                      : ""
-                  }
+                  relative hover:bg-gray-50 hover:scale-[1.02] hover:border-gray-400
+                  ${isSelected ? "bg-gray-50 scale-[1.02] border-gray-400" : ""}
                 `}
                 onClick={() => onZoneClick(zone.id)}
                 onDragOver={handleDragOver}
@@ -261,15 +256,15 @@ const GridDiagram = ({
                     key={word}
                     draggable="true"
                     onDragStart={(e) => {
-                      e.dataTransfer.effectAllowed = 'move';
-                      e.dataTransfer.setData('text/plain', word);
-                      e.dataTransfer.setData('sourceZone', zone.id);
-                      e.target.classList.add('opacity-50');
+                      e.dataTransfer.effectAllowed = "move";
+                      e.dataTransfer.setData("text/plain", word);
+                      e.dataTransfer.setData("sourceZone", zone.id);
+                      e.target.classList.add("opacity-50");
                     }}
                     onDragEnd={(e) => {
-                      e.target.classList.remove('opacity-50');
+                      e.target.classList.remove("opacity-50");
                     }}
-                    className="w-full px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm font-light text-[11px] sm:text-xs bg-white text-gray-600 border border-gray-200 cursor-grab active:cursor-grabbing transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a] text-center"
+                    className="w-full px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm font-light text-sm sm:text-base bg-white text-gray-600 border border-gray-200 cursor-grab active:cursor-grabbing transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a] text-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       onWordClick(word, zone.id);
@@ -295,12 +290,8 @@ const GridDiagram = ({
                 className={`
                   border-2 border-gray-300 rounded-xl bg-white p-2 sm:p-3 min-h-[90px] sm:min-h-[120px] w-[110px] sm:w-[180px]
                   flex flex-col gap-1.5 sm:gap-2 cursor-pointer transition-all duration-200
-                  relative hover:bg-gray-50 hover:scale-[1.02] hover:border-gray-600
-                  ${
-                    isSelected
-                      ? "bg-gray-50 shadow-[0_0_15px_rgba(33,150,243,0.3)] scale-[1.02] border-gray-600"
-                      : ""
-                  }
+                  relative hover:bg-gray-50 hover:scale-[1.02] hover:border-gray-400
+                  ${isSelected ? "bg-gray-50 scale-[1.02] border-gray-400" : ""}
                 `}
                 onClick={() => onZoneClick(zone.id)}
                 onDragOver={handleDragOver}
@@ -326,15 +317,15 @@ const GridDiagram = ({
                     key={word}
                     draggable="true"
                     onDragStart={(e) => {
-                      e.dataTransfer.effectAllowed = 'move';
-                      e.dataTransfer.setData('text/plain', word);
-                      e.dataTransfer.setData('sourceZone', zone.id);
-                      e.target.classList.add('opacity-50');
+                      e.dataTransfer.effectAllowed = "move";
+                      e.dataTransfer.setData("text/plain", word);
+                      e.dataTransfer.setData("sourceZone", zone.id);
+                      e.target.classList.add("opacity-50");
                     }}
                     onDragEnd={(e) => {
-                      e.target.classList.remove('opacity-50');
+                      e.target.classList.remove("opacity-50");
                     }}
-                    className="w-full px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm font-light text-[11px] sm:text-xs bg-white text-gray-600 border border-gray-200 cursor-grab active:cursor-grabbing transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a] text-center"
+                    className="w-full px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-sm font-light text-sm sm:text-base bg-white text-gray-600 border border-gray-200 cursor-grab active:cursor-grabbing transition-all hover:bg-gray-100 hover:text-[#1a1a1a] hover:border-[#1a1a1a] text-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       onWordClick(word, zone.id);

@@ -180,9 +180,7 @@ function App() {
       <div className="min-h-screen flex flex-col items-center justify-center p-5">
         <div className="max-w-[1200px] w-full">
           <header className="text-center text-[#1a1a1a]">
-            <h1 className="text-4xl mb-3 font-light tracking-tight">
-              3-Theme Triangle Puzzle
-            </h1>
+            <h1 className="text-4xl mb-3 font-light tracking-tight">Trisect</h1>
             <p className="text-base text-gray-600 font-light leading-relaxed">
               Loading today's puzzle...
             </p>
@@ -227,11 +225,15 @@ function App() {
   return (
     <div className="min-h-screen p-5 flex flex-col items-center justify-center">
       <div className="max-w-[1200px] w-full">
-        <header className="text-center text-[#1a1a1a] mb-8">
-          <h1 className="text-4xl mb-3 font-light tracking-tight">Trisect</h1>
-          <p className="text-base text-gray-600 font-light leading-relaxed">
-            Discover three hidden themes and sort words by how many they match!
-          </p>
+        <header className="text-center text-[#1a1a1a] mb-8 flex flex-row items-end justify-center">
+          <h1 className="text-4xl font-medium tracking-tight mr-3">Trisect</h1>
+          <h2>
+            {new Date().toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </h2>
         </header>
 
         {resultMessage && (
@@ -255,6 +257,8 @@ function App() {
           onWordClick={handlePlacedWordClick}
           onWordDrop={handleWordDrop}
         />
+
+        <div className="border-t border-gray-300 my-4" />
 
         <WordBank
           words={availableWords}

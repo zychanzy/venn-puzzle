@@ -42,7 +42,7 @@ const WordBank = ({ words, allWords, onWordClick, onWordReturn }) => {
   return (
     <div className="bg-white rounded-sm p-8 mb-6">
       <div
-        className="word-bank-container flex flex-wrap gap-2.5 transition-all rounded-sm"
+        className="word-bank-container flex flex-wrap gap-2.5 transition-all rounded-sm max-w-[800px] mx-auto"
         onDragOver={handleDragOver}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
@@ -57,7 +57,7 @@ const WordBank = ({ words, allWords, onWordClick, onWordReturn }) => {
               draggable="true"
               onDragStart={(e) => handleDragStart(e, word)}
               onDragEnd={handleDragEnd}
-              className="px-3.5 py-2 rounded-sm font-light text-sm cursor-grab active:cursor-grabbing transition-all bg-white text-[#1a1a1a] border border-gray-200 hover:bg-[#1a1a1a] hover:text-white hover:border-[#1a1a1a] select-none"
+              className="px-3.5 py-2 rounded-sm font-light text-base sm:text-lg cursor-grab active:cursor-grabbing transition-all bg-white text-[#1a1a1a] border border-gray-200 hover:bg-[#1a1a1a] hover:text-white hover:border-[#1a1a1a] select-none"
               onClick={() => onWordClick(word)}
             >
               {word}
@@ -65,7 +65,7 @@ const WordBank = ({ words, allWords, onWordClick, onWordReturn }) => {
           ) : (
             <div
               key={word}
-              className="px-3.5 py-2 rounded-sm font-light text-sm bg-gray-100 text-gray-400 border border-gray-200 border-dashed select-none"
+              className="px-3.5 py-2 rounded-sm font-light text-base sm:text-lg bg-gray-100 text-gray-400 border border-gray-200 border-dashed select-none"
             >
               {word}
             </div>
