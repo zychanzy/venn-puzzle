@@ -171,9 +171,7 @@ function App() {
     <div className="min-h-screen p-5 flex flex-col items-center justify-center">
       <div className="max-w-[1200px] w-full">
         <header className="text-center text-[#1a1a1a] mb-8">
-          <h1 className="text-4xl mb-3 font-light tracking-tight">
-            3-Theme Triangle Puzzle
-          </h1>
+          <h1 className="text-4xl mb-3 font-light tracking-tight">Trisect</h1>
           <p className="text-base text-gray-600 font-light leading-relaxed">
             Deduce the three hidden themes and place all 14 words correctly.
             {!showThemes &&
